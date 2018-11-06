@@ -37,13 +37,13 @@ func main() {
 	go func() {
 		log.Println("running ingestor service")
 
-		if err := ingestor.Run(ctx, *csvPath); err != nil {
+		if err := (&ingestor.Ingestor{}).Run(ctx, *csvPath); err != nil {
 			log.Fatalf("while running ingestor service -> %s", err)
 		}
 
 		log.Println("running storage service")
 
-		if err := storage.Run(ctx, *port); err != nil {
+		if err := (&storage.Storage{}).Run(ctx, *port); err != nil {
 			log.Fatalf("while running storage service -> %s", err)
 		}
 	}()
