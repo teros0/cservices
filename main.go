@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	port    = flag.string("port", ":3333", "http port to listen on")
+	port    = flag.String("port", ":7777", "http port to listen on")
 	csvPath = flag.String("path", "./resorces/data.csv", "path to the csv file")
 )
 
@@ -35,16 +35,16 @@ func main() {
 	}()
 
 	go func() {
-		log.Println("running ingestor service")
-
-		if err := (&ingestor.Ingestor{}).Run(ctx, *csvPath); err != nil {
-			log.Fatalf("while running ingestor service -> %s", err)
-		}
-
 		log.Println("running storage service")
 
 		if err := (&storage.Storage{}).Run(ctx, *port); err != nil {
 			log.Fatalf("while running storage service -> %s", err)
+		}
+
+		log.Println("running ingestor service")
+
+		if err := (&ingestor.Ingestor{}).Run(ctx, *csvPath, *port); err != nil {
+			log.Fatalf("while running ingestor service -> %s", err)
 		}
 	}()
 }
