@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package resources;
+
+service Storage {
+    rpc SaveRecord(Record) returns (Empty) {}
+}
+
+message Record {
+    int64 id = 1;
+    string name = 2;
+    string email = 3;
+    string phone  = 4;
+}
+
+message Empty {
+    
+}
