@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	port    = flag.Int("port", 3333, "http port to listen on")
+	port    = flag.string("port", ":3333", "http port to listen on")
 	csvPath = flag.String("path", "./resorces/data.csv", "path to the csv file")
 )
 
