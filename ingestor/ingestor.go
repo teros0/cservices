@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 	"strings"
 
 	"google.golang.org/grpc"
@@ -25,7 +24,7 @@ func (i *Ingestor) Run(ctx context.Context, path string, port string) (err error
 	serviceAddress += port
 	f, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("couldn't opend file %s -> %s", path, err)
+		return fmt.Errorf("couldn't open file %s -> %s", path, err)
 	}
 	r := csv.NewReader(bufio.NewReader(f))
 
@@ -52,10 +51,6 @@ func (i *Ingestor) Run(ctx context.Context, path string, port string) (err error
 func (i *Ingestor) SendRecord(rec []string) (err error) {
 	id, name, email, phone := rec[0], rec[1], rec[2], rec[3]
 	phone = strings.Join([]string{"+44", phone}, "")
-	idi, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		return fmt.Errorf("csv contains incorrect data %s -> %s", id, err)
-	}
 	grpcConn, err := grpc.Dial(
 		serviceAddress,
 		grpc.WithInsecure(),
@@ -69,7 +64,7 @@ func (i *Ingestor) SendRecord(rec []string) (err error) {
 	c := context.Background()
 	_, err = cl.SaveRecord(c,
 		&resources.Record{
-			Id:    idi,
+			Id:    id,
 			Name:  name,
 			Email: email,
 			Phone: phone,

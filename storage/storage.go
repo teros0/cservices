@@ -10,7 +10,7 @@ import (
 )
 
 type Storage struct {
-	db map[int64]interface{}
+	db map[string]interface{}
 }
 
 func (s *Storage) SaveRecord(ctx context.Context, r *resources.Record) (e *resources.Empty, err error) {
@@ -19,16 +19,16 @@ func (s *Storage) SaveRecord(ctx context.Context, r *resources.Record) (e *resou
 }
 
 func (s *Storage) Run(ctx context.Context, port string) (err error) {
-	s.db = make(map[int64]interface{})
+	s.db = make(map[string]interface{})
 
 	l, err := net.Listen("tcp", port)
 	if err != nil {
 		return fmt.Errorf("couldn't start listener at port %s -> %s", port, err)
 	}
-
 	server := grpc.NewServer()
 	resources.RegisterStorageServer(server, s)
-	if err = server.Serve(l); err != nil {
+	err = server.Serve(l)
+	if err != nil {
 		return fmt.Errorf("while serving -> %s", err)
 	}
 	return nil
