@@ -1,9 +1,11 @@
 FROM golang
 
-ADD . /go/src/github.com/teros0/cservices/
+ADD . /go/src/cservices/
 
-RUN go install github.com/teros0/cservices/
+RUN go install cservices/
 
-ENTRYPOINT ["/go/bin/cservices"]
+ENTRYPOINT /go/bin/cservices -path=/data.csv -port=:7777
+
+COPY ./resources/data.csv /
 
 EXPOSE 7777
