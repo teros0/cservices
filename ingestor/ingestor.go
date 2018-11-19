@@ -71,7 +71,7 @@ func (i *Ingestor) SendRecord(rec []string) (err error) {
 			Phone: phone,
 		})
 	if err != nil {
-		fmt.Errorf("while saving record {%s, %s, %s, %s} to storage -> %s", id, name, email, phone, err)
+		return fmt.Errorf("while saving record {%s, %s, %s, %s} to storage -> %s", id, name, email, phone, err)
 	}
 	return nil
 }
