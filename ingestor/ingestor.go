@@ -3,12 +3,13 @@ package ingestor
 import (
 	"bufio"
 	"context"
-	"cservices/resources"
 	"encoding/csv"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/teros0/cservices/resources"
 
 	"google.golang.org/grpc"
 )

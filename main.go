@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"cservices/ingestor"
-	"cservices/storage"
 	"flag"
 	"fmt"
 	"log"
@@ -11,6 +9,9 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/teros0/cservices/ingestor"
+	"github.com/teros0/cservices/storage"
 )
 
 var (

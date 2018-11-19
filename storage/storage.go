@@ -2,9 +2,10 @@ package storage
 
 import (
 	"context"
-	"cservices/resources"
 	"fmt"
 	"net"
+
+	"github.com/teros0/cservices/resources"
 
 	"google.golang.org/grpc"
 )
