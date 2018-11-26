@@ -10,19 +10,14 @@ import (
 	"strings"
 
 	"github.com/teros0/cservices/resources"
-
-	"google.golang.org/grpc"
 )
 
 type Ingestor struct {
+	client resources.StorageClient
 }
 
-var (
-	serviceAddress = "localhost"
-)
-
-func (i *Ingestor) Run(ctx context.Context, path string, port string) (err error) {
-	serviceAddress += port
+func (i *Ingestor) Run(ctx context.Context, path string, c resources.StorageClient) (err error) {
+	i.client = c
 	f, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("couldn't open file %s -> %s", path, err)
@@ -35,7 +30,6 @@ func (i *Ingestor) Run(ctx context.Context, path string, port string) (err error
 			return nil
 		default:
 		}
-
 		rec, err := r.Read()
 		if err == io.EOF {
 			return nil
@@ -52,18 +46,8 @@ func (i *Ingestor) Run(ctx context.Context, path string, port string) (err error
 func (i *Ingestor) SendRecord(rec []string) (err error) {
 	id, name, email, phone := rec[0], rec[1], rec[2], rec[3]
 	phone = strings.Join([]string{"+44", phone}, "")
-	grpcConn, err := grpc.Dial(
-		serviceAddress,
-		grpc.WithInsecure(),
-	)
-	if err != nil {
-		return fmt.Errorf("while dialing storage service -> %s", err)
-	}
-	defer grpcConn.Close()
-
-	cl := resources.NewStorageClient(grpcConn)
 	c := context.Background()
-	_, err = cl.SaveRecord(c,
+	_, err = i.client.SaveRecord(c,
 		&resources.Record{
 			Id:    id,
 			Name:  name,

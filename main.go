@@ -11,7 +11,9 @@ import (
 	"syscall"
 
 	"github.com/teros0/cservices/ingestor"
+	"github.com/teros0/cservices/resources"
 	"github.com/teros0/cservices/storage"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -40,9 +42,7 @@ func main() {
 	wg.Add(2)
 
 	go func() {
-		defer func() {
-			wg.Done()
-		}()
+		defer wg.Done()
 		log.Println("running storage service")
 
 		if err := (&storage.Storage{}).Run(ctx, *port); err != nil {
@@ -50,12 +50,15 @@ func main() {
 		}
 	}()
 	go func() {
-		defer func() {
-			wg.Done()
-		}()
+		defer wg.Done()
 		log.Println("running ingestor service")
-
-		if err := (&ingestor.Ingestor{}).Run(ctx, *csvPath, *port); err != nil {
+		grpcConn, err := grpc.Dial(*port, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("while dialing storage service -> %s", err)
+		}
+		defer grpcConn.Close()
+		cl := resources.NewStorageClient(grpcConn)
+		if err := (&ingestor.Ingestor{}).Run(ctx, *csvPath, cl); err != nil {
 			log.Fatalf("while running ingestor service -> %s", err)
 		}
 	}()
