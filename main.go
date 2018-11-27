@@ -58,7 +58,11 @@ func main() {
 		}
 		defer grpcConn.Close()
 		cl := resources.NewStorageClient(grpcConn)
-		if err := (&ingestor.Ingestor{}).Run(ctx, *csvPath, cl); err != nil {
+		f, err := os.Open(*csvPath)
+		if err != nil {
+			log.Fatalf("couldn't open file %s -> %s", *csvPath, err)
+		}
+		if err := (&ingestor.Ingestor{}).Run(ctx, f, cl); err != nil {
 			log.Fatalf("while running ingestor service -> %s", err)
 		}
 	}()

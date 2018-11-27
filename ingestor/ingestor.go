@@ -6,7 +6,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	"github.com/teros0/cservices/resources"
@@ -16,13 +15,9 @@ type Ingestor struct {
 	client resources.StorageClient
 }
 
-func (i *Ingestor) Run(ctx context.Context, path string, c resources.StorageClient) (err error) {
+func (i *Ingestor) Run(ctx context.Context, rd io.Reader, c resources.StorageClient) (err error) {
 	i.client = c
-	f, err := os.Open(path)
-	if err != nil {
-		return fmt.Errorf("couldn't open file %s -> %s", path, err)
-	}
-	r := csv.NewReader(bufio.NewReader(f))
+	r := csv.NewReader(bufio.NewReader(rd))
 
 	for {
 		select {
