@@ -39,6 +39,9 @@ func (i *Ingestor) Run(ctx context.Context, rd io.Reader, c resources.StorageCli
 }
 
 func (i *Ingestor) SendRecord(rec []string) (err error) {
+	if len(rec) != 4 {
+		return fmt.Errorf("record %v is invalid, not enough fields", rec)
+	}
 	id, name, email, phone := rec[0], rec[1], rec[2], rec[3]
 	phone = strings.Join([]string{"+44", phone}, "")
 	c := context.Background()
